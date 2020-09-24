@@ -46,9 +46,10 @@ module.exports = (env, { mode }) => {
         name: 'consumer',
         filename: 'remoteEntry.js',
         remotes: {
-          // content: 'starter@http://localhost:8080/remoteEntry.js'
           content:
             'starter@https://federation-mini-app.vercel.app/remoteEntry.js',
+          contentNext:
+            'starterNext@https://federation-mini-app-next.vercel.app/remoteEntry.js',
         },
         exposes: {},
         shared: require('./package.json').dependencies,
