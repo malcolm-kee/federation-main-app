@@ -1,5 +1,6 @@
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 /**
  * @returns {import('webpack').Configuration}
@@ -29,7 +30,24 @@ module.exports = (env, { mode }) => {
       rules: [
         {
           test: /\.css$/i,
-          use: ['style-loader', 'css-loader'],
+          use: [
+            {
+              loader: MiniCssExtractPlugin.loader,
+              options: {
+                hmr: mode === 'development',
+              },
+            },
+            {
+              loader: 'css-loader',
+              options: { sourceMap: true, importLoaders: 1 },
+            },
+            {
+              loader: 'postcss-loader',
+              options: {
+                sourceMap: true,
+              },
+            },
+          ],
         },
         {
           test: /\.(js|jsx)$/,
@@ -43,7 +61,7 @@ module.exports = (env, { mode }) => {
 
     plugins: [
       new ModuleFederationPlugin({
-        name: 'consumer',
+        name: 'main',
         filename: 'remoteEntry.js',
         remotes: {
           content:
@@ -51,12 +69,15 @@ module.exports = (env, { mode }) => {
           contentNext:
             'starterNext@https://federation-mini-app-next.vercel.app/remoteEntry.js',
         },
-        exposes: {},
+        exposes: {
+          './container': './src/components/container',
+        },
         shared: require('./package.json').dependencies,
       }),
       new HtmlWebPackPlugin({
         template: './src/index.html',
       }),
+      new MiniCssExtractPlugin(),
     ],
   };
 };
