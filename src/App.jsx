@@ -1,7 +1,7 @@
 import * as React from 'react';
 import ReactDOM from 'react-dom';
+import Container from './components/container';
 import { Header } from './components/header';
-import { Container } from './components/container';
 import { appLoadNext } from './constant';
 import './index.css';
 
