@@ -1,6 +1,18 @@
+require('dotenv').config();
+
+const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+
+const dependencies = require('./package.json').dependencies;
+
+const appName = 'malcolm';
+
+const starterUrl =
+  process.env.STARTER_URL || 'https://federation-mini-app.vercel.app';
 
 /**
  * @returns {import('webpack').Configuration}
@@ -16,6 +28,7 @@ module.exports = (env, { mode }) => {
     mode,
     output: {
       publicPath,
+      path: path.resolve(__dirname, 'dist'),
     },
 
     resolve: {
@@ -59,25 +72,39 @@ module.exports = (env, { mode }) => {
       ],
     },
 
+    devtool: false,
+
     plugins: [
+      new CleanWebpackPlugin(),
       new ModuleFederationPlugin({
-        name: 'main',
+        name: appName,
         filename: 'remoteEntry.js',
         remotes: {
-          content:
-            'starter@https://federation-mini-app.vercel.app/remoteEntry.js',
+          content: `starter@${starterUrl}/remoteEntry.js`,
           contentNext:
             'starterNext@https://federation-mini-app-next.vercel.app/remoteEntry.js',
         },
         exposes: {
           './container': './src/components/container',
+          './button': './src/components/button',
         },
-        shared: require('./package.json').dependencies,
+        shared: {
+          ...dependencies,
+          react: {
+            singleton: true,
+            requiredVersion: dependencies.react,
+          },
+          'react-dom': {
+            singleton: true,
+            requiredVersion: dependencies['react-dom'],
+          },
+        },
       }),
       new HtmlWebPackPlugin({
         template: './src/index.html',
       }),
       new MiniCssExtractPlugin(),
-    ],
+      mode === 'production' && new OptimizeCssAssetsPlugin(),
+    ].filter(Boolean),
   };
 };

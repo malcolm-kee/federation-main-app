@@ -1,9 +1,9 @@
 import * as React from 'react';
 import ReactDOM from 'react-dom';
-import Container from './components/container';
 import { Header } from './components/header';
 import { appLoadNext } from './constant';
-import './index.css';
+
+const Container = React.lazy(() => import('./components/container'));
 
 const Content = React.lazy(() =>
   appLoadNext.content
@@ -13,12 +13,12 @@ const Content = React.lazy(() =>
 
 const App = () => (
   <>
-    <Header />
-    <Container>
-      <h1 className="text-5xl">Main App</h1>
-      <p>Hi there, I'm React from Webpack 5.</p>
-    </Container>
     <React.Suspense fallback="Loading...">
+      <Header />
+      <Container>
+        <h1 className="text-5xl">Main App</h1>
+        <p>Hi there, I'm React from Webpack 5.</p>
+      </Container>
       <Content />
     </React.Suspense>
   </>
