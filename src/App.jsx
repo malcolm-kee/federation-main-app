@@ -1,9 +1,10 @@
 import * as React from 'react';
 import ReactDOM from 'react-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { Header } from './components/header';
-import { appLoadNext } from './constant';
-
-const Container = React.lazy(() => import('./components/container'));
+import { appLoadNext } from './constants/feature-toggle';
+import * as routes from './constants/routes';
+import { HomePage } from './pages/home';
 
 const Content = React.lazy(() =>
   appLoadNext.content
@@ -12,16 +13,15 @@ const Content = React.lazy(() =>
 );
 
 const App = () => (
-  <>
+  <BrowserRouter>
+    <Header />
     <React.Suspense fallback="Loading...">
-      <Header />
-      <Container>
-        <h1 className="text-5xl">Main App</h1>
-        <p>Hi there, I'm React from Webpack 5.</p>
-      </Container>
-      <Content />
+      <Switch>
+        <Route path={routes.detailsUrl} component={Content} />
+        <Route path={routes.homeUrl} component={HomePage} exact />
+      </Switch>
     </React.Suspense>
-  </>
+  </BrowserRouter>
 );
 
 ReactDOM.render(<App />, document.getElementById('app'));

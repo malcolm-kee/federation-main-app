@@ -37,6 +37,7 @@ module.exports = (env, { mode }) => {
 
     devServer: {
       port: 8081,
+      historyApiFallback: true,
     },
 
     module: {
@@ -85,8 +86,9 @@ module.exports = (env, { mode }) => {
             'starterNext@https://federation-mini-app-next.vercel.app/remoteEntry.js',
         },
         exposes: {
-          './container': './src/components/container',
           './button': './src/components/button',
+          './container': './src/components/container',
+          './routes': './src/constants/routes',
         },
         shared: {
           ...dependencies,
