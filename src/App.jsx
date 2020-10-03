@@ -1,7 +1,7 @@
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import { Header } from './components/header';
+import Header from './components/header';
 import { appLoadNext } from './constants/feature-toggle';
 import * as routes from './constants/routes';
 import { HomePage } from './pages/home';
