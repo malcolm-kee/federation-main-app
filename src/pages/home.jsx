@@ -1,7 +1,7 @@
 import * as React from 'react';
-import Container from '../components/container';
 import { Link } from 'react-router-dom';
-import { detailsUrl } from '../constants/routes';
+import Container from '../components/container';
+import { careerUrl, detailsUrl } from '../constants/routes';
 
 export const HomePage = () => {
   return (
@@ -15,7 +15,14 @@ export const HomePage = () => {
         expedita nisi inventore quasi cupiditate recusandae eligendi magni esse
         perferendis veritatis dicta modi vitae neque!
       </p>
-      <Link to={detailsUrl}>Go to Details</Link>
+      <div className="flex space-x-2 items-center">
+        <Link to={detailsUrl} className="text-pink-600 hover:underline">
+          Go to Details
+        </Link>
+        <Link to={careerUrl} className="text-pink-600 hover:underline">
+          Career
+        </Link>
+      </div>
     </Container>
   );
 };

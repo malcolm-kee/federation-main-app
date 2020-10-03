@@ -12,12 +12,15 @@ const Content = React.lazy(() =>
     : import('content/content')
 );
 
+const Career = React.lazy(() => import('career/career'));
+
 const App = () => (
   <BrowserRouter>
     <Header />
     <React.Suspense fallback="Loading...">
       <Switch>
         <Route path={routes.detailsUrl} component={Content} />
+        <Route path={routes.careerUrl} component={Career} />
         <Route path={routes.homeUrl} component={HomePage} exact />
       </Switch>
     </React.Suspense>

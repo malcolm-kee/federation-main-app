@@ -14,6 +14,9 @@ const appName = 'malcolm';
 const starterUrl =
   process.env.STARTER_URL || 'https://federation-mini-app.vercel.app';
 
+const careerUrl =
+  process.env.CAREER_URL || 'https://federation-career-app.vercel.app';
+
 /**
  * @returns {import('webpack').Configuration}
  */
@@ -84,6 +87,7 @@ module.exports = (env, { mode }) => {
           content: `starter@${starterUrl}/remoteEntry.js`,
           contentNext:
             'starterNext@https://federation-mini-app-next.vercel.app/remoteEntry.js',
+          career: `career@${careerUrl}/remoteEntry.js`,
         },
         exposes: {
           './button': './src/components/button',
