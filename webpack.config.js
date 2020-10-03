@@ -92,6 +92,7 @@ module.exports = (env, { mode }) => {
         exposes: {
           './button': './src/components/button',
           './container': './src/components/container',
+          './header': './src/components/header',
           './routes': './src/constants/routes',
         },
         shared: {
