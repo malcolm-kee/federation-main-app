@@ -90,7 +90,6 @@ module.exports = (env, { mode }) => {
           career: `career@${careerUrl}/remoteEntry.js`,
         },
         exposes: {
-          './button': './src/components/button',
           './container': './src/components/container',
           './header': './src/components/header',
           './routes': './src/constants/routes',
