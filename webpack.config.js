@@ -9,8 +9,6 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const dependencies = require('./package.json').dependencies;
 
-const appName = 'malcolm';
-
 const starterUrl =
   process.env.STARTER_URL || 'https://federation-mini-app.vercel.app';
 
@@ -81,11 +79,11 @@ module.exports = (env, { mode }) => {
     plugins: [
       new CleanWebpackPlugin(),
       new ModuleFederationPlugin({
-        name: appName,
+        name: 'federation-demo-main',
         filename: 'remoteEntry.js',
         remotes: {
-          content: `starter@${starterUrl}/remoteEntry.js`,
-          contentNext:
+          mini: `starter@${starterUrl}/remoteEntry.js`,
+          miniNext:
             'starterNext@https://federation-mini-app-next.vercel.app/remoteEntry.js',
           career: `career@${careerUrl}/remoteEntry.js`,
         },

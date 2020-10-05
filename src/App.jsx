@@ -7,9 +7,7 @@ import * as routes from './constants/routes';
 import { HomePage } from './pages/home';
 
 const Content = React.lazy(() =>
-  appLoadNext.content
-    ? import('contentNext/content')
-    : import('content/content')
+  appLoadNext.content ? import('miniNext/content') : import('mini/content')
 );
 
 const Career = React.lazy(() => import('career/career'));
