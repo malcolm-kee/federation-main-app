@@ -79,7 +79,7 @@ module.exports = (env, { mode }) => {
     plugins: [
       new CleanWebpackPlugin(),
       new ModuleFederationPlugin({
-        name: 'federation-demo-main',
+        name: 'mother',
         filename: 'remoteEntry.js',
         remotes: {
           mini: `starter@${starterUrl}/remoteEntry.js`,
