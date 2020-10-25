@@ -9,12 +9,6 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const dependencies = require('./package.json').dependencies;
 
-const starterUrl =
-  process.env.STARTER_URL || 'https://federation-mini-app.vercel.app';
-
-const careerUrl =
-  process.env.CAREER_URL || 'https://federation-career-app.vercel.app';
-
 /**
  * @returns {import('webpack').Configuration}
  */
@@ -82,10 +76,14 @@ module.exports = (env, { mode }) => {
         name: 'mother',
         filename: 'remoteEntry.js',
         remotes: {
-          mini: `starter@${starterUrl}/remoteEntry.js`,
+          mini: `starter@${
+            process.env.STARTER_URL || 'https://federation-mini-app.vercel.app'
+          }/remoteEntry.js`,
           miniNext:
             'starterNext@https://federation-mini-app-next.vercel.app/remoteEntry.js',
-          career: `career@${careerUrl}/remoteEntry.js`,
+          career: `career@${
+            process.env.CAREER_URL || 'https://federation-career-app.vercel.app'
+          }/remoteEntry.js`,
         },
         exposes: {
           './container': './src/components/container',
