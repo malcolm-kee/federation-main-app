@@ -9,17 +9,22 @@ const path = require('path');
 
 const pkgJson = require('./package.json');
 const dependencies = pkgJson.dependencies;
+const generateRemoteConfig = require('./generate-remote-config');
 
 /**
- * @returns {import('webpack').Configuration}
+ * @returns {Promise<import('webpack').Configuration>}
  */
-module.exports = (env, { mode }) => {
-  const publicPath =
+module.exports = async (env, { mode }) => {
+  const publicPath = sanitizePublicPath(
     process.env.VERCEL_URL ||
-    process.env.PUBLIC_PATH ||
-    (mode === 'development'
-      ? 'http://localhost:8081/'
-      : 'https://federation-main-app.vercel.app/');
+      process.env.PUBLIC_PATH ||
+      (mode === 'development'
+        ? 'http://localhost:8081/'
+        : 'https://federation-main-app.vercel.app/')
+  );
+
+  const careerAppUrl =
+    process.env.CAREER_URL || 'https://federation-career-app.vercel.app';
 
   return {
     mode,
@@ -36,7 +41,16 @@ module.exports = (env, { mode }) => {
     devServer: {
       port: 8081,
       historyApiFallback: true,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods':
+          'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+        'Access-Control-Allow-Headers':
+          'X-Requested-With, content-type, Authorization',
+      },
     },
+
+    target: process.env.NODE_ENV === 'development' ? 'web' : 'browserslist',
 
     module: {
       rules: [
@@ -75,14 +89,13 @@ module.exports = (env, { mode }) => {
         name: pkgJson.federations.name,
         filename: 'remoteEntry.[contenthash].js',
         remotes: {
-          mini: `starter@${
-            process.env.STARTER_URL || 'https://federation-mini-app.vercel.app'
-          }/remoteEntry.js`,
+          mini: await generateRemoteConfig(
+            process.env.MINI_URL || 'https://federation-mini-app.vercel.app',
+            'mini'
+          ),
           miniNext:
             'starterNext@https://federation-mini-app-next.vercel.app/remoteEntry.js',
-          career: `career@${
-            process.env.CAREER_URL || 'https://federation-career-app.vercel.app'
-          }/remoteEntry.js`,
+          career: await generateRemoteConfig(careerAppUrl, 'career'),
         },
         exposes: pkgJson.federations.exposes,
         shared: {
@@ -97,7 +110,7 @@ module.exports = (env, { mode }) => {
           },
           'react-query': {
             singleton: true,
-            requiredVersion: dependencies['react-dom'],
+            requiredVersion: dependencies['react-query'],
           },
         },
       }),
@@ -121,4 +134,16 @@ module.exports = (env, { mode }) => {
       },
     },
   };
+};
+
+/**
+ *
+ * @param {string} str
+ * @returns
+ */
+const sanitizePublicPath = (str) => {
+  const withTrailingSlash = str.endsWith('/') ? str : `${str}/`;
+  return withTrailingSlash.startsWith('http')
+    ? withTrailingSlash
+    : `https://${withTrailingSlash}`;
 };

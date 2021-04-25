@@ -5,6 +5,7 @@ import Header from './components/header';
 import { appLoadNext } from './constants/feature-toggle';
 import * as routes from './constants/routes';
 import { HomePage } from './pages/home';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 const Content = React.lazy(() =>
   appLoadNext.content ? import('miniNext/content') : import('mini/content')
@@ -12,15 +13,19 @@ const Content = React.lazy(() =>
 
 const Career = React.lazy(() => import('career/career'));
 
+const queryClient = new QueryClient();
+
 const App = () => (
   <BrowserRouter>
     <Header />
     <React.Suspense fallback="Loading...">
-      <Switch>
-        <Route path={routes.detailsUrl} component={Content} />
-        <Route path={routes.careerUrl} component={Career} />
-        <Route path={routes.homeUrl} component={HomePage} exact />
-      </Switch>
+      <QueryClientProvider client={queryClient}>
+        <Switch>
+          <Route path={routes.detailsUrl} component={Content} />
+          <Route path={routes.careerUrl} component={Career} />
+          <Route path={routes.homeUrl} component={HomePage} exact />
+        </Switch>
+      </QueryClientProvider>
     </React.Suspense>
   </BrowserRouter>
 );

@@ -4,7 +4,8 @@
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack --mode production",
     "build:dev": "webpack --mode development",
-    "start": "webpack serve --mode development --env development"
+    "start": "cross-env NODE_ENV=development webpack serve --mode development --env development",
+    "dev": "cross-env NODE_ENV=development webpack serve --mode development --env development"
   },
   "license": "MIT",
   "author": {
@@ -22,6 +23,7 @@
     "dotenv": "^8.2.0",
     "html-webpack-plugin": "^4.5.0",
     "mini-css-extract-plugin": "^1.2.0",
+    "node-fetch": "^2.6.1",
     "optimize-css-assets-webpack-plugin": "^5.0.4",
     "postcss": "^8.1.1",
     "postcss-cli": "^8.0.0",
@@ -36,6 +38,7 @@
   "dependencies": {
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-query": "^3.13.12",
     "react-router-dom": "^5.2.0"
   },
   "federations": {
