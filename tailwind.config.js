@@ -1,4 +1,6 @@
 module.exports = {
+  prefix: 'mn-',
+  mode: 'jit',
   future: {
     removeDeprecatedGapUtilities: true,
     purgeLayersByDefault: true,

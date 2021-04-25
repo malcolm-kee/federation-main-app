@@ -6,7 +6,7 @@ import { careerUrl, detailsUrl } from '../constants/routes';
 export const HomePage = () => {
   return (
     <Container>
-      <h1 className="text-3xl">Home</h1>
+      <h1 className="mn-text-3xl">Home</h1>
       <p>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro cum ab
         quisquam iusto, fugit eum dignissimos inventore sequi consequuntur
@@ -15,11 +15,11 @@ export const HomePage = () => {
         expedita nisi inventore quasi cupiditate recusandae eligendi magni esse
         perferendis veritatis dicta modi vitae neque!
       </p>
-      <div className="flex space-x-2 items-center">
-        <Link to={detailsUrl} className="text-pink-600 hover:underline">
+      <div className="mn-flex mn-space-x-2 mn-items-center">
+        <Link to={detailsUrl} className="mn-text-pink-600 hover:mn-underline">
           Go to Details
         </Link>
-        <Link to={careerUrl} className="text-pink-600 hover:underline">
+        <Link to={careerUrl} className="mn-text-pink-600 mn-hover:underline">
           Career
         </Link>
       </div>
