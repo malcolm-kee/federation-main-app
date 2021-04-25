@@ -1,29 +1,37 @@
 require('dotenv').config();
 
-const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
+const path = require('path');
 
-const dependencies = require('./package.json').dependencies;
+const pkgJson = require('./package.json');
+const dependencies = pkgJson.dependencies;
+const generateRemoteConfig = require('./generate-remote-config');
 
 /**
- * @returns {import('webpack').Configuration}
+ * @returns {Promise<import('webpack').Configuration>}
  */
-module.exports = (env, { mode }) => {
-  const publicPath =
-    process.env.PUBLIC_PATH ||
-    (mode === 'development'
-      ? 'http://localhost:8081/'
-      : 'https://federation-main-app.vercel.app/');
+module.exports = async (env, { mode }) => {
+  const publicPath = sanitizePublicPath(
+    process.env.VERCEL_URL ||
+      process.env.PUBLIC_PATH ||
+      (mode === 'development'
+        ? 'http://localhost:8081/'
+        : 'https://federation-main-app.vercel.app/')
+  );
+
+  const careerAppUrl =
+    process.env.CAREER_URL || 'https://federation-career-app.vercel.app';
 
   return {
     mode,
     output: {
       publicPath,
       path: path.resolve(__dirname, 'dist'),
+      clean: true,
     },
 
     resolve: {
@@ -33,7 +41,16 @@ module.exports = (env, { mode }) => {
     devServer: {
       port: 8081,
       historyApiFallback: true,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods':
+          'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+        'Access-Control-Allow-Headers':
+          'X-Requested-With, content-type, Authorization',
+      },
     },
+
+    target: process.env.NODE_ENV === 'development' ? 'web' : 'browserslist',
 
     module: {
       rules: [
@@ -42,9 +59,6 @@ module.exports = (env, { mode }) => {
           use: [
             {
               loader: MiniCssExtractPlugin.loader,
-              options: {
-                hmr: mode === 'development',
-              },
             },
             {
               loader: 'css-loader',
@@ -71,25 +85,19 @@ module.exports = (env, { mode }) => {
     devtool: false,
 
     plugins: [
-      new CleanWebpackPlugin(),
       new ModuleFederationPlugin({
-        name: 'mother',
-        filename: 'remoteEntry.js',
+        name: pkgJson.federations.name,
+        filename: 'remoteEntry.[contenthash].js',
         remotes: {
-          mini: `starter@${
-            process.env.STARTER_URL || 'https://federation-mini-app.vercel.app'
-          }/remoteEntry.js`,
+          mini: await generateRemoteConfig(
+            process.env.MINI_URL || 'https://federation-mini-app.vercel.app',
+            'mini'
+          ),
           miniNext:
             'starterNext@https://federation-mini-app-next.vercel.app/remoteEntry.js',
-          career: `career@${
-            process.env.CAREER_URL || 'https://federation-career-app.vercel.app'
-          }/remoteEntry.js`,
+          career: await generateRemoteConfig(careerAppUrl, 'career'),
         },
-        exposes: {
-          './container': './src/components/container',
-          './header': './src/components/header',
-          './routes': './src/constants/routes',
-        },
+        exposes: pkgJson.federations.exposes,
         shared: {
           ...dependencies,
           react: {
@@ -100,6 +108,10 @@ module.exports = (env, { mode }) => {
             singleton: true,
             requiredVersion: dependencies['react-dom'],
           },
+          'react-query': {
+            singleton: true,
+            requiredVersion: dependencies['react-query'],
+          },
         },
       }),
       new HtmlWebPackPlugin({
@@ -107,6 +119,31 @@ module.exports = (env, { mode }) => {
       }),
       new MiniCssExtractPlugin(),
       mode === 'production' && new OptimizeCssAssetsPlugin(),
+      new WebpackManifestPlugin(),
     ].filter(Boolean),
+    optimization: {
+      runtimeChunk: 'single',
+      splitChunks: {
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/](react|react-dom|react-query)[\\/]/,
+            name: 'vendor',
+            chunks: 'all',
+          },
+        },
+      },
+    },
   };
+};
+
+/**
+ *
+ * @param {string} str
+ * @returns
+ */
+const sanitizePublicPath = (str) => {
+  const withTrailingSlash = str.endsWith('/') ? str : `${str}/`;
+  return withTrailingSlash.startsWith('http')
+    ? withTrailingSlash
+    : `https://${withTrailingSlash}`;
 };
