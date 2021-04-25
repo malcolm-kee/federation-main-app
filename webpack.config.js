@@ -1,19 +1,21 @@
 require('dotenv').config();
 
-const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
+const path = require('path');
 
-const dependencies = require('./package.json').dependencies;
+const pkgJson = require('./package.json');
+const dependencies = pkgJson.dependencies;
 
 /**
  * @returns {import('webpack').Configuration}
  */
 module.exports = (env, { mode }) => {
   const publicPath =
+    process.env.VERCEL_URL ||
     process.env.PUBLIC_PATH ||
     (mode === 'development'
       ? 'http://localhost:8081/'
@@ -24,6 +26,7 @@ module.exports = (env, { mode }) => {
     output: {
       publicPath,
       path: path.resolve(__dirname, 'dist'),
+      clean: true,
     },
 
     resolve: {
@@ -42,9 +45,6 @@ module.exports = (env, { mode }) => {
           use: [
             {
               loader: MiniCssExtractPlugin.loader,
-              options: {
-                hmr: mode === 'development',
-              },
             },
             {
               loader: 'css-loader',
@@ -71,10 +71,9 @@ module.exports = (env, { mode }) => {
     devtool: false,
 
     plugins: [
-      new CleanWebpackPlugin(),
       new ModuleFederationPlugin({
-        name: 'mother',
-        filename: 'remoteEntry.js',
+        name: pkgJson.federations.name,
+        filename: 'remoteEntry.[contenthash].js',
         remotes: {
           mini: `starter@${
             process.env.STARTER_URL || 'https://federation-mini-app.vercel.app'
@@ -85,11 +84,7 @@ module.exports = (env, { mode }) => {
             process.env.CAREER_URL || 'https://federation-career-app.vercel.app'
           }/remoteEntry.js`,
         },
-        exposes: {
-          './container': './src/components/container',
-          './header': './src/components/header',
-          './routes': './src/constants/routes',
-        },
+        exposes: pkgJson.federations.exposes,
         shared: {
           ...dependencies,
           react: {
@@ -100,6 +95,10 @@ module.exports = (env, { mode }) => {
             singleton: true,
             requiredVersion: dependencies['react-dom'],
           },
+          'react-query': {
+            singleton: true,
+            requiredVersion: dependencies['react-dom'],
+          },
         },
       }),
       new HtmlWebPackPlugin({
@@ -107,6 +106,19 @@ module.exports = (env, { mode }) => {
       }),
       new MiniCssExtractPlugin(),
       mode === 'production' && new OptimizeCssAssetsPlugin(),
+      new WebpackManifestPlugin(),
     ].filter(Boolean),
+    optimization: {
+      runtimeChunk: 'single',
+      splitChunks: {
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/](react|react-dom|react-query)[\\/]/,
+            name: 'vendor',
+            chunks: 'all',
+          },
+        },
+      },
+    },
   };
 };
