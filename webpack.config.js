@@ -7,6 +7,7 @@ const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const path = require('path');
 
+const ExternalTemplateRemotesPlugin = require('./ExternalTemplateRemotesPlugin');
 const pkgJson = require('./package.json');
 const dependencies = pkgJson.dependencies;
 const generateRemoteConfig = require('./generate-remote-config');
@@ -87,7 +88,7 @@ module.exports = async (env, { mode }) => {
     plugins: [
       new ModuleFederationPlugin({
         name: pkgJson.federations.name,
-        filename: 'remoteEntry.[contenthash].js',
+        filename: 'remoteEntry.js',
         remotes: {
           mini: await generateRemoteConfig(
             process.env.MINI_URL || 'https://federation-mini-app.vercel.app',
@@ -95,7 +96,7 @@ module.exports = async (env, { mode }) => {
           ),
           miniNext:
             'starterNext@https://federation-mini-app-next.vercel.app/remoteEntry.js',
-          career: await generateRemoteConfig(careerAppUrl, 'career'),
+          career: `career@${careerAppUrl}/remoteEntry.js`,
         },
         exposes: pkgJson.federations.exposes,
         shared: {
@@ -114,6 +115,7 @@ module.exports = async (env, { mode }) => {
           },
         },
       }),
+      new ExternalTemplateRemotesPlugin(),
       new HtmlWebPackPlugin({
         template: './src/index.html',
       }),
