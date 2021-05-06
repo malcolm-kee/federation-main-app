@@ -17,21 +17,10 @@ const webpack = require('webpack');
  * @returns {Promise<import('webpack').Configuration>}
  */
 module.exports = async (env, { mode }) => {
-  const publicPath = sanitizePublicPath(
-    process.env.VERCEL_URL ||
-      process.env.PUBLIC_PATH ||
-      (mode === 'development'
-        ? 'http://localhost:8081/'
-        : 'https://federation-main-app.vercel.app/')
-  );
-
-  const careerAppUrl =
-    process.env.CAREER_URL || 'https://federation-career-app.vercel.app';
-
   return {
     mode,
     output: {
-      publicPath,
+      publicPath: 'auto',
       path: path.resolve(__dirname, 'dist'),
       clean: true,
     },
@@ -84,10 +73,13 @@ module.exports = async (env, { mode }) => {
       ],
     },
 
-    devtool: false,
+    devtool: env === 'development' ? 'eval-cheap-source-map' : 'source-map',
 
     plugins: [
-      new webpack.EnvironmentPlugin(['FEDERATION_ENDPOINT']),
+      new webpack.EnvironmentPlugin({
+        FEDERATION_ENDPOINT:
+          'https://my-json-server.typicode.com/malcolm-kee/federation-api/federations/shell',
+      }),
       new ModuleFederationPlugin({
         name: pkgJson.federations.name,
         filename: 'remoteEntry.js',
@@ -98,7 +90,7 @@ module.exports = async (env, { mode }) => {
           ),
           miniNext:
             'starterNext@https://federation-mini-app-next.vercel.app/remoteEntry.js',
-          '@mkeeorg/career-app': `career@[window.careerUrl]/remoteEntry.js`,
+          '@mkeeorg/career-app': `career@[window._endpoints.career]/remoteEntry.js`,
         },
         exposes: pkgJson.federations.exposes,
         shared: {
@@ -125,29 +117,5 @@ module.exports = async (env, { mode }) => {
       mode === 'production' && new OptimizeCssAssetsPlugin(),
       new WebpackManifestPlugin(),
     ].filter(Boolean),
-    optimization: {
-      runtimeChunk: 'single',
-      splitChunks: {
-        cacheGroups: {
-          vendor: {
-            test: /[\\/]node_modules[\\/](react|react-dom|react-query)[\\/]/,
-            name: 'vendor',
-            chunks: 'all',
-          },
-        },
-      },
-    },
   };
-};
-
-/**
- *
- * @param {string} str
- * @returns
- */
-const sanitizePublicPath = (str) => {
-  const withTrailingSlash = str.endsWith('/') ? str : `${str}/`;
-  return withTrailingSlash.startsWith('http')
-    ? withTrailingSlash
-    : `https://${withTrailingSlash}`;
 };

@@ -1,12 +1,14 @@
-import './index.css';
-
-const federationEndpoint =
-  process.env.FEDERATION_ENDPOINT ||
-  'https://my-json-server.typicode.com/malcolm-kee/federation-api/endpoints';
+const federationEndpoint = process.env.FEDERATION_ENDPOINT;
 
 fetch(federationEndpoint)
   .then((res) => res.json())
-  .then((result) => {
-    window.careerUrl = result.career;
+  .then(({ endpoints }) => {
+    window._endpoints = endpoints;
     return import('./App');
+  })
+  .then(() => {
+    console.log('done importing App in shell app');
+  })
+  .catch(() => {
+    console.log('error importing App in shell app');
   });

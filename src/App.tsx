@@ -1,11 +1,12 @@
 import * as React from 'react';
 import ReactDOM from 'react-dom';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Header from './components/header';
 import { appLoadNext } from './constants/feature-toggle';
 import * as routes from './constants/routes';
+import './index.css';
 import { HomePage } from './pages/home';
-import { QueryClient, QueryClientProvider } from 'react-query';
 
 const Content = React.lazy(() =>
   appLoadNext.content ? import('miniNext/content') : import('mini/content')

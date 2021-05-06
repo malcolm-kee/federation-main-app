@@ -48,11 +48,12 @@
     "react-router-dom": "^5.2.0"
   },
   "federations": {
-    "name": "mother",
+    "name": "shell",
     "exposes": {
       "./container": "./src/components/container",
       "./header": "./src/components/header",
-      "./routes": "./src/constants/routes"
+      "./routes": "./src/constants/routes",
+      "./App": "./src/App"
     }
   }
 }
