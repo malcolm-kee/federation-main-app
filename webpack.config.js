@@ -37,7 +37,7 @@ module.exports = async (env, { mode }) => {
     },
 
     resolve: {
-      extensions: ['.jsx', '.js', '.json'],
+      extensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
     },
 
     devServer: {
@@ -75,7 +75,7 @@ module.exports = async (env, { mode }) => {
           ],
         },
         {
-          test: /\.(js|jsx)$/,
+          test: /\.(js|jsx|ts|tsx)$/,
           exclude: /node_modules/,
           use: {
             loader: 'babel-loader',
