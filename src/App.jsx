@@ -11,7 +11,7 @@ const Content = React.lazy(() =>
   appLoadNext.content ? import('miniNext/content') : import('mini/content')
 );
 
-const Career = React.lazy(() => import('career/career'));
+const Career = React.lazy(() => import('@mkeeorg/career-app/career'));
 
 const queryClient = new QueryClient();
 

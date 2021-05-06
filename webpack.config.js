@@ -11,6 +11,7 @@ const ExternalTemplateRemotesPlugin = require('./ExternalTemplateRemotesPlugin')
 const pkgJson = require('./package.json');
 const dependencies = pkgJson.dependencies;
 const generateRemoteConfig = require('./generate-remote-config');
+const webpack = require('webpack');
 
 /**
  * @returns {Promise<import('webpack').Configuration>}
@@ -86,6 +87,7 @@ module.exports = async (env, { mode }) => {
     devtool: false,
 
     plugins: [
+      new webpack.EnvironmentPlugin(['FEDERATION_ENDPOINT']),
       new ModuleFederationPlugin({
         name: pkgJson.federations.name,
         filename: 'remoteEntry.js',
@@ -96,7 +98,7 @@ module.exports = async (env, { mode }) => {
           ),
           miniNext:
             'starterNext@https://federation-mini-app-next.vercel.app/remoteEntry.js',
-          career: `career@${careerAppUrl}/remoteEntry.js`,
+          '@mkeeorg/career-app': `career@[window.careerUrl]/remoteEntry.js`,
         },
         exposes: pkgJson.federations.exposes,
         shared: {
