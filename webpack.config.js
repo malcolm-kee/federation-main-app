@@ -9,7 +9,6 @@ const path = require('path');
 
 const pkgJson = require('./package.json');
 const dependencies = pkgJson.dependencies;
-const generateRemoteConfig = require('./generate-remote-config');
 
 /**
  * @returns {Promise<import('webpack').Configuration>}
@@ -86,18 +85,19 @@ module.exports = async (env, { mode }) => {
 
     plugins: [
       new ModuleFederationPlugin({
-        name: pkgJson.federations.name,
-        filename: 'remoteEntry.[contenthash].js',
+        name: 'host',
+        filename: 'remoteEntry.js',
+        exposes: {
+          './container': './src/components/container',
+          './header': './src/components/header',
+          './routes': './src/constants/routes',
+        },
         remotes: {
-          mini: await generateRemoteConfig(
-            process.env.MINI_URL || 'https://federation-mini-app.vercel.app',
-            'mini'
-          ),
+          mini: 'mini@https://federation-mini-app.vercel.app/remoteEntry.js',
           miniNext:
             'starterNext@https://federation-mini-app-next.vercel.app/remoteEntry.js',
-          career: await generateRemoteConfig(careerAppUrl, 'career'),
+          career: `career@${careerAppUrl}/remoteEntry.js`,
         },
-        exposes: pkgJson.federations.exposes,
         shared: {
           ...dependencies,
           react: {
