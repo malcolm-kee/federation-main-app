@@ -8,3 +8,4 @@ Consuming:
 
 - [federation-mini-app](https://github.com/malcolm-kee/federation-mini-app)
 - [federation-career-app](https://github.com/malcolm-kee/federation-career-app)
+- [federation-marketing-app](https://github.com/malcolm-kee/federation-marketing-app)

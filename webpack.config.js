@@ -3,8 +3,7 @@ require('dotenv').config();
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const path = require('path');
 
 const pkgJson = require('./package.json');
@@ -14,6 +13,8 @@ const dependencies = pkgJson.dependencies;
  * @returns {Promise<import('webpack').Configuration>}
  */
 module.exports = async (env, { mode }) => {
+  const isProd = mode === 'production';
+
   const publicPath = sanitizePublicPath(
     process.env.VERCEL_URL ||
       process.env.PUBLIC_PATH ||
@@ -22,13 +23,16 @@ module.exports = async (env, { mode }) => {
         : 'https://federation-main-app.vercel.app/')
   );
 
-  const careerAppUrl =
-    process.env.CAREER_URL || 'https://federation-career-app.vercel.app';
-
   return {
     mode,
     output: {
       publicPath,
+      filename: isProd
+        ? 'static/js/[name].[contenthash].js'
+        : 'static/js/[name].js',
+      chunkFilename: isProd
+        ? 'static/js/[name].[contenthash].js'
+        : 'static/js/[name].chunk.js',
       path: path.resolve(__dirname, 'dist'),
       clean: true,
     },
@@ -81,22 +85,26 @@ module.exports = async (env, { mode }) => {
       ],
     },
 
-    devtool: false,
+    devtool: isProd ? 'source-map' : 'cheap-module-source-map',
 
     plugins: [
       new ModuleFederationPlugin({
         name: 'host',
         filename: 'remoteEntry.js',
-        exposes: {
-          './container': './src/components/container',
-          './header': './src/components/header',
-          './routes': './src/constants/routes',
-        },
+        exposes: {},
         remotes: {
           mini: 'mini@https://federation-mini-app.vercel.app/remoteEntry.js',
-          miniNext:
-            'starterNext@https://federation-mini-app-next.vercel.app/remoteEntry.js',
-          career: `career@${careerAppUrl}/remoteEntry.js`,
+          miniNext: `starterNext@${
+            process.env.MINI_NEXT_URL ||
+            'https://federation-mini-app-next.vercel.app'
+          }/remoteEntry.js`,
+          career: `career@${
+            process.env.CAREER_URL || 'https://federation-career-app.vercel.app'
+          }/remoteEntry.js`,
+          marketing: `marketing@${
+            process.env.MARKETING_URL ||
+            'https://federation-marketing-app.vercel.app/'
+          }/remoteEntry.js`,
         },
         shared: {
           ...dependencies,
@@ -118,20 +126,13 @@ module.exports = async (env, { mode }) => {
         template: './src/index.html',
       }),
       new MiniCssExtractPlugin(),
-      mode === 'production' && new OptimizeCssAssetsPlugin(),
-      new WebpackManifestPlugin(),
-    ].filter(Boolean),
+    ],
     optimization: {
-      runtimeChunk: 'single',
-      splitChunks: {
-        cacheGroups: {
-          vendor: {
-            test: /[\\/]node_modules[\\/](react|react-dom|react-query)[\\/]/,
-            name: 'vendor',
-            chunks: 'all',
-          },
-        },
-      },
+      minimize: isProd,
+      minimizer: [
+        '...', // keep existing minimizer
+        new CssMinimizerPlugin(),
+      ],
     },
   };
 };
