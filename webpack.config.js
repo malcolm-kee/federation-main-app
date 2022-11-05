@@ -51,6 +51,7 @@ module.exports = async (env, { mode }) => {
         'Access-Control-Allow-Headers':
           'X-Requested-With, content-type, Authorization',
       },
+      hot: false,
     },
 
     target: process.env.NODE_ENV === 'development' ? 'web' : 'browserslist',
@@ -65,7 +66,16 @@ module.exports = async (env, { mode }) => {
             },
             {
               loader: 'css-loader',
-              options: { sourceMap: true, importLoaders: 1 },
+              options: {
+                sourceMap: true,
+                importLoaders: 1,
+                modules: {
+                  auto: true,
+                  localIdentName: isProd
+                    ? '[hash:base64]'
+                    : '[path][name]__[local]',
+                },
+              },
             },
             {
               loader: 'postcss-loader',

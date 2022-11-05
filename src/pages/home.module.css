@@ -1,0 +1,26 @@
+.title {
+  font-size: 2.5rem;
+  line-height: 3rem;
+  text-align: center;
+  margin-block: 2rem;
+  font-weight: 600;
+}
+
+.em {
+  font-style: normal;
+  text-decoration: underline;
+}
+
+.linkList {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.link {
+  color: rgb(219, 39, 119);
+}
+
+.link:hover {
+  text-decoration: underline;
+}

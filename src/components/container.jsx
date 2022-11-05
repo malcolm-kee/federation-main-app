@@ -1,11 +1,8 @@
 import * as React from 'react';
+import styles from './container.module.css';
 
 const Container = ({ children }) => {
-  return (
-    <div className="mn-max-w-6xl mn-mx-auto mn-px-2 sm:mn-px-6 mn-py-2">
-      {children}
-    </div>
-  );
+  return <div className={styles.container}>{children}</div>;
 };
 
 export default Container;
