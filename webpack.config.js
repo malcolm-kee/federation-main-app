@@ -9,6 +9,10 @@ const ExternalRemotesPlugin = require('external-remotes-plugin');
 
 const pkgJson = require('./package.json');
 const dependencies = pkgJson.dependencies;
+const devDependencies = pkgJson.devDependencies;
+
+const getPkgVersion = (pkgName) =>
+  dependencies[pkgName] || devDependencies[pkgName];
 
 /**
  * @returns {Promise<import('webpack').Configuration>}
@@ -118,18 +122,22 @@ module.exports = async (env, { mode }) => {
               }/remoteEntry.js`,
         },
         shared: {
-          ...dependencies,
+          '@mkeeorg/federation-ui': getPkgVersion('@mkeeorg/federation-ui'),
           react: {
             singleton: true,
-            requiredVersion: dependencies.react,
+            requiredVersion: getPkgVersion('react'),
           },
           'react-dom': {
             singleton: true,
-            requiredVersion: dependencies['react-dom'],
+            requiredVersion: getPkgVersion('react-dom'),
           },
           'react-query': {
             singleton: true,
-            requiredVersion: dependencies['react-query'],
+            requiredVersion: getPkgVersion('react-query'),
+          },
+          'react-router-dom': {
+            singleton: true,
+            requiredVersion: getPkgVersion('react-router-dom'),
           },
         },
       }),
