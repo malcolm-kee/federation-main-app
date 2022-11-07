@@ -65,4 +65,4 @@ app.use('/', (req, res, next) => {
   } else next();
 });
 
-app.listen(port, () => console.log(`HelloNode app listening on port ${port}!`));
+app.listen(port, () => console.log(`Host app listening on port ${port}!`));
