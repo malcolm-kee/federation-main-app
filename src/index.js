@@ -1,3 +1,3 @@
-import './reset.css';
+import '@mkeeorg/federation-ui/dist/index.css';
 
 import('./App');

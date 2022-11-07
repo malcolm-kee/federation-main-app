@@ -1,7 +1,8 @@
+import { Container } from '@mkeeorg/federation-ui';
 import HeroSection from 'marketing/hero-section';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import Container from '../components/container';
+
 import { careerUrl, detailsUrl } from '../constants/routes';
 import styles from './home.module.css';
 
