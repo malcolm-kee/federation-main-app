@@ -55,6 +55,8 @@ function serverIndexHtml(response) {
   });
 }
 
+app.get('/health', (_, res) => res.json({ ok: true }));
+
 app.use(express.static('dist', { index: false }));
 
 app.get('/', (_, res) => serverIndexHtml(res));
