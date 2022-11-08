@@ -1,4 +1,25 @@
 import '@mkeeorg/federation-ui/dist/index.css';
+import { loadRemoteEntry, loadRemoteModule } from './mf';
+
+const getPluginConfig = async () => {
+  if (window.appPlugins) {
+    return Promise.all(
+      window.appPlugins.map((plugin) =>
+        loadRemoteEntry(`${plugin.url}/remoteEntry.js`, plugin.app_name)
+          .then(() =>
+            loadRemoteModule({
+              remoteName: plugin.app_name,
+              exposedModule: plugin.path,
+              remoteEntry: plugin.url,
+            })
+          )
+          .then((m) => m.default)
+      )
+    );
+  }
+
+  return [];
+};
 
 const storageKey = 'urlOverwrite';
 
@@ -32,4 +53,6 @@ if (window.appUrls) {
   } catch (err) {}
 }
 
-import('./App');
+getPluginConfig().then((plugins) =>
+  import('./App').then((m) => m.bootstrap(plugins))
+);

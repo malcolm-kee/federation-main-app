@@ -33,15 +33,26 @@ async function getAppUrls() {
   return result;
 }
 
+async function getPlugins() {
+  await connectionTask;
+  const queryResult = await dbClient.query(
+    `SELECT app_name, url, path FROM plugins WHERE active IS TRUE;`
+  );
+
+  return queryResult.rows;
+}
+
 function serverIndexHtml(response) {
-  getAppUrls().then((urls) => {
+  Promise.all([getAppUrls(), getPlugins()]).then(([urls, plugins]) => {
     const $html = parse(htmlContent);
 
     const $title = $html.querySelector('title');
 
     $title.insertAdjacentHTML(
       'afterend',
-      `<script>var appUrls = ${JSON.stringify(urls)};</script>`
+      `<script>var appUrls = ${JSON.stringify(
+        urls
+      )}; var appPlugins = ${JSON.stringify(plugins)}</script>`
     );
 
     Object.values(urls).forEach((url) =>
@@ -55,7 +66,7 @@ function serverIndexHtml(response) {
   });
 }
 
-app.get('/health', (_, res) => res.json({ ok: true }));
+app.get('/health', (_, res) => res.status(200).json({ ok: true }));
 
 app.use(express.static('dist', { index: false }));
 

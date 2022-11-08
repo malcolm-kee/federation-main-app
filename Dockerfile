@@ -7,8 +7,10 @@ RUN corepack enable
 COPY pnpm-lock.yaml ./
 RUN pnpm fetch
 
-ADD . .
+COPY package.json ./
 RUN pnpm install --offline
+
+ADD . .
 RUN pnpm run build
 
 RUN pnpm prune --prod

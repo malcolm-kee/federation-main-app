@@ -1,4 +1,4 @@
-import Header from 'marketing/header';
+import { Header, PluginContextProvider } from '@mkeeorg/federation-ui';
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -14,7 +14,7 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <BrowserRouter>
-    <Header />
+    <Header showPluginNavItems />
     <React.Suspense fallback="Loading...">
       <QueryClientProvider client={queryClient}>
         <Switch>
@@ -27,4 +27,11 @@ const App = () => (
   </BrowserRouter>
 );
 
-ReactDOM.render(<App />, document.getElementById('app'));
+export function bootstrap(plugins) {
+  ReactDOM.render(
+    <PluginContextProvider value={plugins}>
+      <App />
+    </PluginContextProvider>,
+    document.getElementById('app')
+  );
+}
