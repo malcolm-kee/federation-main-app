@@ -10,7 +10,6 @@ const getPluginConfig = async () => {
             loadRemoteModule({
               remoteName: plugin.app_name,
               exposedModule: plugin.path,
-              remoteEntry: plugin.url,
             })
           )
           .then((m) => m.default)

@@ -62,6 +62,13 @@ function serverIndexHtml(response) {
       )
     );
 
+    plugins.forEach((plugin) =>
+      $title.insertAdjacentHTML(
+        'afterend',
+        `<link rel="preload" as="script" href="${plugin.url}/remoteEntry.js" />`
+      )
+    );
+
     response.send($html.toString());
   });
 }

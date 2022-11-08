@@ -108,12 +108,6 @@ module.exports = async (env, { mode }) => {
             process.env.MINI_NEXT_URL ||
             'https://federation-mini-app-next.vercel.app'
           }/remoteEntry.js`,
-          career: isProd
-            ? `career@[window.appUrls?.career]/remoteEntry.js`
-            : `career@${
-                process.env.CAREER_URL ||
-                'https://federation-career-app.vercel.app'
-              }/remoteEntry.js`,
           marketing: isProd
             ? `marketing@[window.appUrls?.marketing]/remoteEntry.js`
             : `marketing@${

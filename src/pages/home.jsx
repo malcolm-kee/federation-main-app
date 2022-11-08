@@ -3,7 +3,7 @@ import HeroSection from 'marketing/hero-section';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 
-import { careerUrl, detailsUrl } from '../constants/routes';
+import { detailsUrl } from '../constants/routes';
 import styles from './home.module.css';
 
 export const HomePage = () => {
@@ -25,9 +25,6 @@ export const HomePage = () => {
         <div className={styles.linkList}>
           <Link to={detailsUrl} className={styles.link}>
             Go to Details
-          </Link>
-          <Link to={careerUrl} className={styles.link}>
-            Career
           </Link>
         </div>
       </Container>

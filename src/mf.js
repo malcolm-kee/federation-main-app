@@ -66,9 +66,10 @@ export function loadRemoteEntry(remoteEntry, remoteName) {
     script.onerror = reject;
 
     script.onload = () => {
-      initRemote(remoteName);
-      moduleMap[remoteEntry] = true;
-      resolve();
+      initRemote(remoteName).then(() => {
+        moduleMap[remoteEntry] = true;
+        resolve();
+      });
     };
 
     document.body.appendChild(script);
