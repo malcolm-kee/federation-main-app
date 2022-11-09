@@ -101,15 +101,8 @@ module.exports = async (env, { mode }) => {
         filename: 'remoteEntry.js',
         exposes: {},
         remotes: {
-          mini: isProd
-            ? `mini@[window.appUrls?.mini]/remoteEntry.js`
-            : 'mini@https://federation-mini-app.vercel.app/remoteEntry.js',
-          marketing: isProd
-            ? `marketing@[window.appUrls?.marketing]/remoteEntry.js`
-            : `marketing@${
-                process.env.MARKETING_URL ||
-                'https://federation-marketing-app.vercel.app'
-              }/remoteEntry.js`,
+          mini: `mini@[window.appUrls?.mini]/remoteEntry.js`,
+          marketing: `marketing@[window.appUrls?.marketing]/remoteEntry.js`,
         },
         shared: {
           '@mkeeorg/federation-ui': getPkgVersion('@mkeeorg/federation-ui'),
