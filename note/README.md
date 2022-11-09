@@ -6,7 +6,6 @@
 1. [What is webpack module federation](#what-is-webpack-module-federation)
 1. [What module federation enables](#what-module-federation-enables)
 1. [Limitations of module federation](#limitations-of-module-federation)
-1. [How module federation could improve](#how-module-federation-could-improve)
 
 ## What is Microfrontend
 
@@ -61,11 +60,6 @@ Step 2 and 3 can be skipped as loading remote module can be done dynamically [li
 1. TypeScript: The dynamic nature of module federation does not work well with build time typechecking. Possible workaround is minimizing the cross-build integration points, e.g. using the plugin architecture.
 1. Unit testing: Manual mocking is required for remote modules
 1. E2E testing: module federation could not eliminate with E2E testing, in fact it increases its importance.
-
-## How module federation could improve
-
-1. Better documentation (just like almost any other webpack feature 😆)
-1. NodeJS support to support server-side rendering.
 
 ## Where to learn more
 
