@@ -98,7 +98,15 @@ export const pluginService = {
   },
   addPlugin(plugin) {
     const plugins = getInitialPluginValue();
-    const newPlugins = plugins.concat(plugin);
+
+    const similarPlugin = plugins.findIndex(
+      (p) => p.app_name === plugin.app_name
+    );
+
+    const newPlugins =
+      similarPlugin === -1
+        ? plugins.concat(plugin)
+        : plugins.map((p, index) => (index === similarPlugin ? plugin : p));
 
     sessionStorage.setItem(pluginStorageKey, JSON.stringify(newPlugins));
     window.location.reload();
