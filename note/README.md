@@ -31,7 +31,7 @@ With module federation, we can share the module from one webpack build **at runt
 2. In the build that intends to consume a module, configure webpack [like this](../webpack.config.js#L107)
 3. Then you can import the shared module using conventional ES Module syntax [like this](../src/pages/home.jsx#L2).
 
-Step 2 and 3 can be skipped as loading remote module can be done dynamically [like this](../src/index.js#L8).
+Step 2 and 3 can be skipped as loading remote module can be done dynamically [like this](../src/services/remote-overwrite.js#L82).
 
 ## What module federation enables
 

@@ -3,6 +3,7 @@ import HeroSection from 'marketing/hero-section';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 
+import { AddPluginForm, OverwriteUrlForm } from '../components/remote-form';
 import { detailsUrl } from '../constants/routes';
 import styles from './home.module.css';
 
@@ -12,8 +13,7 @@ export const HomePage = () => {
       <HeroSection />
       <Container>
         <h1 className={styles.title}>
-          Thanks for being 1 in <em className={styles.em}>at least fifty!</em>{' '}
-          (I hope)
+          Thanks for being 1 in <em className={styles.em}>7 billions!</em>
         </h1>
         <p>
           I hope the demo will works! I really do. Please works demo and no
@@ -47,6 +47,8 @@ export const HomePage = () => {
             </a>
           </li>
         </ul>
+        <OverwriteUrlForm />
+        <AddPluginForm />
       </Container>
     </>
   );
