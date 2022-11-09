@@ -104,10 +104,6 @@ module.exports = async (env, { mode }) => {
           mini: isProd
             ? `mini@[window.appUrls?.mini]/remoteEntry.js`
             : 'mini@https://federation-mini-app.vercel.app/remoteEntry.js',
-          miniNext: `starterNext@${
-            process.env.MINI_NEXT_URL ||
-            'https://federation-mini-app-next.vercel.app'
-          }/remoteEntry.js`,
           marketing: isProd
             ? `marketing@[window.appUrls?.marketing]/remoteEntry.js`
             : `marketing@${
