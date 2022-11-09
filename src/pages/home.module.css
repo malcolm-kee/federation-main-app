@@ -24,3 +24,11 @@
 .link:hover {
   text-decoration: underline;
 }
+
+.helpLink {
+  color: teal;
+}
+
+.helpLink:hover {
+  text-decoration: underline;
+}

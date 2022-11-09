@@ -27,6 +27,26 @@ export const HomePage = () => {
             Go to Details
           </Link>
         </div>
+        <ul>
+          <li>
+            Use this link to overwrite marketing app URL:{' '}
+            <a
+              href="?_marketing=https://federation-marketing-app-git-fix-change-hero-malcolm-kee.vercel.app"
+              className={styles.helpLink}
+            >
+              ?_marketing=https://federation-marketing-app-git-fix-change-hero-malcolm-kee.vercel.app
+            </a>
+          </li>
+          <li>
+            Use this link to add help app:{' '}
+            <a
+              href="?_career=https://federation-career-app-git-feat-add-help-slot-malcolm-kee.vercel.app&pluginName=help&pluginUrl=https://federation-help-app.vercel.app&pluginPath=./plugin"
+              className={styles.helpLink}
+            >
+              ?_career=https://federation-career-app-git-feat-add-help-slot-malcolm-kee.vercel.app&pluginName=help&pluginUrl=https://federation-help-app.vercel.app&pluginPath=./plugin
+            </a>
+          </li>
+        </ul>
       </Container>
     </>
   );
